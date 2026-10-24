@@ -4,6 +4,12 @@
 
 Local control and live view of **Kasa KC100** cameras (and likely other `smartlife.cam.ipcamera` Kasa cams) from Home Assistant, with no cloud round trip. Reverse engineered from the Kasa app's LAN traffic; see [PROTOCOL.md](PROTOCOL.md).
 
+## Screenshots
+
+| Device page | Live view | Motion zone editor |
+|---|---|---|
+| ![Device page](docs/device.png) | ![Live view](docs/live-view.webp) | ![Zone editor](docs/zone-editor.png) |
+
 ## Features
 - **Live view and snapshots** (H.264 + audio) through a private go2rtc relay.
 - **Motion detection zones:** a zone editor (up to 5 four-corner zones, with a pseudo-live picture) that ships with the integration. Open it from the **Visit** link on the camera's device page, or add the card `type: custom:kasa-camera-zones` with `entity: camera.<your camera>` to any dashboard. The editor is admin-only and has no sidebar entry.
