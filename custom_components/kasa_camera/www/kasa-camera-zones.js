@@ -153,8 +153,8 @@ class KasaZoneEditor extends HTMLElement {
   _pt(e) {
     const r = this._svg.getBoundingClientRect();
     return [
-      Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100)),
-      Math.max(0, Math.min(100, ((e.clientY - r.top) / r.height) * 100)),
+      Math.max(0, Math.min(99, ((e.clientX - r.left) / r.width) * 100)),
+      Math.max(0, Math.min(99, ((e.clientY - r.top) / r.height) * 100)),
     ];
   }
 
@@ -186,8 +186,8 @@ class KasaZoneEditor extends HTMLElement {
       z.y[d.p] = Math.round(py);
     } else {
       // Move the whole zone, clamped so no corner leaves the image.
-      const dx = Math.max(-Math.min(...d.orig.x), Math.min(100 - Math.max(...d.orig.x), px - d.start[0]));
-      const dy = Math.max(-Math.min(...d.orig.y), Math.min(100 - Math.max(...d.orig.y), py - d.start[1]));
+      const dx = Math.max(-Math.min(...d.orig.x), Math.min(99 - Math.max(...d.orig.x), px - d.start[0]));
+      const dy = Math.max(-Math.min(...d.orig.y), Math.min(99 - Math.max(...d.orig.y), py - d.start[1]));
       z.x = d.orig.x.map((v) => Math.round(v + dx));
       z.y = d.orig.y.map((v) => Math.round(v + dy));
     }

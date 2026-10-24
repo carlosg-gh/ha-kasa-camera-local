@@ -37,4 +37,4 @@ class KasaCamNumber(KasaCamEntity, NumberEntity):
     async def async_set_native_value(self, value: float) -> None:
         await self.coordinator.api.async_call(self._module, self._setter, self._args(value))
         self.coordinator.data[self._key] = int(value * 1000) if self._seconds else int(value)
-        self.async_write_ha_state()
+        self.coordinator.async_update_listeners()

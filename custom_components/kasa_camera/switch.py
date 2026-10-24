@@ -31,7 +31,7 @@ class KasaCamSwitch(KasaCamEntity, SwitchEntity):
     async def _set(self, value: str) -> None:
         await self.coordinator.api.async_call(self._module, self._setter, {"value": value})
         self.coordinator.data[self._key] = value
-        self.async_write_ha_state()
+        self.coordinator.async_update_listeners()
 
     async def async_turn_on(self, **kwargs) -> None:
         await self._set("on")

@@ -38,12 +38,12 @@ async def async_setup_frontend(hass: HomeAssistant) -> None:
     websocket_api.async_register_command(hass, ws_set_zones)
 
 
-def _api_for(hass: HomeAssistant, entity_id: str):
+def _coordinator_for(hass: HomeAssistant, entity_id: str):
     entry = er.async_get(hass).async_get(entity_id)
     config_entry = hass.config_entries.async_get_entry(entry.config_entry_id) if entry else None
     if config_entry is None or config_entry.domain != DOMAIN or getattr(config_entry, "runtime_data", None) is None:
         raise KasaCamError(f"{entity_id} is not a loaded Kasa camera")
-    return config_entry.runtime_data.api
+    return config_entry.runtime_data
 
 
 @websocket_api.websocket_command({vol.Required("type"): "kasa_camera/cameras"})
@@ -62,14 +62,14 @@ def ws_cameras(hass: HomeAssistant, connection: websocket_api.ActiveConnection, 
 @websocket_api.async_response
 async def ws_get_zones(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict) -> None:
     try:
-        result = await _api_for(hass, msg["entity_id"]).async_call("motionDetect", "get_detect_area")
+        result = await _coordinator_for(hass, msg["entity_id"]).api.async_call("motionDetect", "get_detect_area")
     except KasaCamError as err:
         connection.send_error(msg["id"], "camera_error", str(err))
         return
     connection.send_result(msg["id"], {"max": result.get("max", MAX_ZONES), "area": result.get("area", [])})
 
 
-_POINT = vol.All([vol.All(vol.Coerce(int), vol.Range(min=0, max=100))], vol.Length(min=4, max=4))
+_POINT = vol.All([vol.All(vol.Coerce(int), vol.Range(min=0, max=99))], vol.Length(min=4, max=4))
 
 
 @websocket_api.require_admin
@@ -83,8 +83,9 @@ _POINT = vol.All([vol.All(vol.Coerce(int), vol.Range(min=0, max=100))], vol.Leng
 @websocket_api.async_response
 async def ws_set_zones(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict) -> None:
     try:
-        await _api_for(hass, msg["entity_id"]).async_call("motionDetect", "set_detect_area", {"area": msg["area"]})
+        await _coordinator_for(hass, msg["entity_id"]).api.async_call("motionDetect", "set_detect_area", {"area": msg["area"]})
     except KasaCamError as err:
         connection.send_error(msg["id"], "camera_error", str(err))
         return
+    await _coordinator_for(hass, msg["entity_id"]).motion.async_load_zones()
     connection.send_result(msg["id"], {"area": msg["area"]})

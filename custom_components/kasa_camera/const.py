@@ -2,7 +2,7 @@
 from homeassistant.const import Platform
 
 DOMAIN = "kasa_camera"
-PLATFORMS = [Platform.CAMERA, Platform.NUMBER, Platform.SELECT, Platform.SWITCH]
+PLATFORMS = [Platform.BINARY_SENSOR, Platform.CAMERA, Platform.NUMBER, Platform.SELECT, Platform.SWITCH]
 CONF_PASSWORD_HASH = "password_md5"
 STREAM_PORT = 19443
 
@@ -31,7 +31,7 @@ NUMBERS = [
         lambda v: {"day_mode_level": int(v), "night_mode_level": int(v)},
     ),
     (
-        "motion_trigger", "Motion minimum trigger time", "mdi:timer-outline", 1, 10, 0.1, "s",
+        "motion_trigger", "Motion minimum trigger time", "mdi:timer-outline", 0.5, 5, 0.1, "s",
         "motionDetect", "get_min_trigger_time", "day_mode_value", "set_min_trigger_time",
         lambda v: {"day_mode_value": int(v * 1000), "night_mode_value": int(v * 1000)},
     ),

@@ -7,6 +7,7 @@ Local control and live view of **Kasa KC100** cameras (and likely other `smartli
 ## Features
 - **Live view and snapshots** (H.264 + audio) through a private go2rtc relay.
 - **Motion detection zones:** a zone editor (up to 5 four-corner zones, with a pseudo-live picture) that ships with the integration. Open it from the **Visit** link on the camera's device page, or add the card `type: custom:kasa-camera-zones` with `entity: camera.<your camera>` to any dashboard. The editor is admin-only and has no sidebar entry.
+- **Motion sensor:** the camera only reports motion to the TP-Link cloud, so Home Assistant detects it itself from the video (frame differencing at 4 fps, only inside the motion zones). It follows the camera's *Motion sensitivity* and *Motion minimum trigger time* settings and clears 10 s after the last movement. It runs only while the *Motion detection* switch is on, so turning that off removes the processing cost (one ffmpeg process).
 - **Switches:** camera on/off (privacy mode), status LED, motion detection, sound detection, clip audio.
 - **Selects:** night vision, image rotation, power frequency, sound sensitivity.
 - **Numbers:** motion sensitivity, motion minimum trigger time.
