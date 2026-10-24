@@ -1,0 +1,12 @@
+{
+  "domain": "kasa_camera",
+  "name": "Kasa Camera (local)",
+  "codeowners": ["@carlosg-gh"],
+  "config_flow": true,
+  "documentation": "https://github.com/carlosg-gh/ha-kasa-camera-local",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/carlosg-gh/ha-kasa-camera-local/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}
