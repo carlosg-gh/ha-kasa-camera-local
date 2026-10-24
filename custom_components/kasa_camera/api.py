@@ -39,7 +39,8 @@ def _dec(data: bytes) -> bytes:
 
 def _ssl_context() -> ssl.SSLContext:
     # The camera presents a self-signed certificate with a weak key.
-    ctx = ssl.create_default_context()
+    # Bare context: no system CA loading (blocking), and this certificate is never verified anyway.
+    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
     ctx.set_ciphers("DEFAULT:@SECLEVEL=0")

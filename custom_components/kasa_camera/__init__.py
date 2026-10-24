@@ -11,7 +11,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import KasaCamApi, KasaCamAuthError, KasaCamError
-from .const import CONF_PASSWORD_HASH, DOMAIN, PLATFORMS, SWITCHES
+from .const import CONF_PASSWORD_HASH, DOMAIN, FETCH, PLATFORMS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -21,15 +21,21 @@ type KasaCamConfigEntry = ConfigEntry[DataUpdateCoordinator]
 async def async_setup_entry(hass: HomeAssistant, entry: KasaCamConfigEntry) -> bool:
     api = KasaCamApi(hass, entry.data[CONF_HOST], entry.data[CONF_USERNAME], entry.data[CONF_PASSWORD_HASH])
 
-    async def _update() -> dict[str, str]:
-        data: dict[str, str] = {}
-        try:
-            for key, module, getter, _setter, _name, _icon in SWITCHES:
-                data[key] = (await api.async_call(module, getter)).get("value")
-        except KasaCamAuthError as err:
-            raise ConfigEntryAuthFailed from err
-        except KasaCamError as err:
-            raise UpdateFailed(str(err)) from err
+    async def _update() -> dict[str, object]:
+        data: dict[str, object] = {}
+        last_error: KasaCamError | None = None
+        for key, module, getter, field in FETCH:
+            try:
+                data[key] = (await api.async_call(module, getter)).get(field)
+            except KasaCamAuthError as err:
+                raise ConfigEntryAuthFailed from err
+            except KasaCamError as err:
+                # One unsupported getter must not take the whole camera offline.
+                _LOGGER.debug("%s.%s failed: %s", module, getter, err)
+                data[key] = None
+                last_error = err
+        if last_error is not None and all(v is None for v in data.values()):
+            raise UpdateFailed(str(last_error))
         return data
 
     coordinator = DataUpdateCoordinator(

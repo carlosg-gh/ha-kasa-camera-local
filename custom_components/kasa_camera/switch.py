@@ -2,37 +2,26 @@
 from __future__ import annotations
 
 from homeassistant.components.switch import SwitchEntity
-from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import KasaCamConfigEntry
-from .const import DOMAIN, SWITCHES
+from .const import SWITCHES
+from .entity import KasaCamEntity
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: KasaCamConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     coordinator = entry.runtime_data
-    async_add_entities(KasaCamSwitch(coordinator, entry, *spec) for spec in SWITCHES)
+    async_add_entities(
+        KasaCamSwitch(coordinator, entry, key, module, setter, name, icon)
+        for key, module, _getter, setter, name, icon in SWITCHES
+    )
 
 
-class KasaCamSwitch(CoordinatorEntity, SwitchEntity):
-    _attr_has_entity_name = True
-
-    def __init__(self, coordinator, entry, key, module, getter, setter, name, icon) -> None:
-        super().__init__(coordinator)
-        self._key, self._module, self._setter = key, module, setter
-        self._attr_name = name
-        self._attr_icon = icon
-        self._attr_unique_id = f"{entry.data[CONF_HOST]}_{key}"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, entry.data[CONF_HOST])},
-            name="Kasa Camera",
-            manufacturer="TP-Link",
-            model="KC100",
-            configuration_url=f"https://{entry.data[CONF_HOST]}:10443",
-        )
+class KasaCamSwitch(KasaCamEntity, SwitchEntity):
+    def __init__(self, coordinator, entry, key, module, setter, name, icon) -> None:
+        super().__init__(coordinator, entry, key, name, icon)
+        self._module, self._setter = module, setter
 
     @property
     def is_on(self) -> bool | None:
