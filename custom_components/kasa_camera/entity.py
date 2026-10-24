@@ -14,7 +14,8 @@ def device_info(host: str) -> DeviceInfo:
         name="Kasa Camera",
         manufacturer="TP-Link",
         model="KC100",
-        configuration_url=f"https://{host}:10443",
+        # "Visit" link on the device page: opens the motion zone editor.
+        configuration_url="homeassistant://kasa-camera-zones",
     )
 
 

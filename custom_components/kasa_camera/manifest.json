@@ -3,10 +3,11 @@
   "name": "Kasa Camera (local)",
   "codeowners": ["@carlosg-gh"],
   "config_flow": true,
+  "dependencies": ["ffmpeg", "http", "frontend", "panel_custom", "websocket_api"],
   "documentation": "https://github.com/carlosg-gh/ha-kasa-camera-local",
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/carlosg-gh/ha-kasa-camera-local/issues",
   "requirements": [],
-  "version": "0.2.0"
+  "version": "0.3.0"
 }

@@ -6,6 +6,7 @@ Local control and live view of **Kasa KC100** cameras (and likely other `smartli
 
 ## Features
 - **Live view and snapshots** (H.264 + audio) through a private go2rtc relay.
+- **Motion detection zones:** a zone editor (up to 5 four-corner zones, with a pseudo-live picture) that ships with the integration. Open it from the **Visit** link on the camera's device page, or add the card `type: custom:kasa-camera-zones` with `entity: camera.<your camera>` to any dashboard. The editor is admin-only and has no sidebar entry.
 - **Switches:** camera on/off (privacy mode), status LED, motion detection, sound detection, clip audio.
 - **Selects:** night vision, image rotation, power frequency, sound sensitivity.
 - **Numbers:** motion sensitivity, motion minimum trigger time.
@@ -13,10 +14,11 @@ Local control and live view of **Kasa KC100** cameras (and likely other `smartli
 - Credentials: the camera authenticates with your Kasa account email and the **MD5 hash** of the password. Only the hash is stored in Home Assistant, never the password.
 
 ## Requirements
+- `ffmpeg` (used for snapshots; present in the Home Assistant container/OS images).
 - A `go2rtc` binary on the Home Assistant host's `PATH` (it ships with the Home Assistant container/OS images). The integration starts its own localhost-only go2rtc process because Home Assistant's bundled go2rtc does not accept the camera's `kasa://` source.
 
 ## Not yet supported
-Motion detection zones, resolution, camera name. Night-vision values and the sensitivity ranges are partly guesses (only `auto`, 4 and 8 were observed).
+Resolution, camera name. Night-vision values and the sensitivity ranges are partly guesses (only `auto`, 4 and 8 were observed).
 
 ## Install (HACS)
 1. HACS → Custom repositories → add this repository, category **Integration**.

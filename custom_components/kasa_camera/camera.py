@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from urllib.parse import quote
 
+from homeassistant.components import ffmpeg
 from homeassistant.components.camera import Camera, CameraEntityFeature
 from homeassistant.const import CONF_HOST, CONF_USERNAME
 from homeassistant.core import HomeAssistant
@@ -32,6 +33,11 @@ class KasaCamCamera(Camera):
         # go2rtc's kasa source sends the "password" as the basic-auth password, which for the KC100 is the MD5 hex.
         source = f"kasa://{user}:{entry.data[CONF_PASSWORD_HASH]}@{host}:{STREAM_PORT}/https/stream/mixed?video=H264&audio=G711"
         self._relay = Go2RtcRelay(source)
+
+    async def async_camera_image(self, width: int | None = None, height: int | None = None) -> bytes | None:
+        """Grab a frame from the relayed stream (the camera has no still-image endpoint)."""
+        url = await self._relay.async_url(self.hass)
+        return await ffmpeg.async_get_image(self.hass, url, width=width, height=height)
 
     async def stream_source(self) -> str | None:
         return await self._relay.async_url(self.hass)
