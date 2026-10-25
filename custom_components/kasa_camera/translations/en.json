@@ -5,9 +5,14 @@
         "title": "Kasa Camera (local)",
         "description": "Kasa account used to log the camera in. Only its MD5 hash is stored.",
         "data": { "host": "Camera IP", "username": "Kasa email", "password": "Kasa password" }
+      },
+      "reauth_confirm": {
+        "title": "Reauthenticate Kasa Camera",
+        "description": "The camera at {host} rejected the stored credentials. Enter the Kasa account again. Only its MD5 hash is stored.",
+        "data": { "username": "Kasa email", "password": "Kasa password" }
       }
     },
     "error": { "cannot_connect": "Cannot reach the camera", "invalid_auth": "Camera rejected the credentials" },
-    "abort": { "already_configured": "This camera is already configured" }
+    "abort": { "already_configured": "This camera is already configured", "reauth_successful": "Reauthentication was successful" }
   }
 }
